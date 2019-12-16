@@ -3,17 +3,6 @@ const fs = require("fs");
 const path = require("path");
 const promisify = require("util").promisify;
 
-const template = `<div class="loader15 center_loader_small width100">
-<div class="sk-fading-circle blue-loader">
-    <div class="sk-circle1 sk-circle"></div>
-    <div class="sk-circle2 sk-circle"></div>
-    <div class="sk-circle3 sk-circle"></div>
-    <div class="sk-circle4 sk-circle"></div>
-    <div class="sk-circle5 sk-circle"></div>
-    <div class="sk-circle6 sk-circle"></div>
-</div>
-</div>`;
-
 function findTemplateTag(js, index) {
   const toMatch = 'template'
   let keyIndex = toMatch.length - 1;
@@ -74,7 +63,7 @@ function findComponentOptions(js, componentStart) {
       } else if (c === '"' || c === "'" || c === "`") {
         parseBlocker = c;
 
-        if (template.tagIndex)
+        if (template.tagIndex && !template.start)
           template.start = index;
       } else if (js[index - 1] == "/") {
         if (c == "/") parseBlocker = "\n";
@@ -88,7 +77,7 @@ function findComponentOptions(js, componentStart) {
       if (c === parseBlocker) {
         parseBlocker = null;
 
-        if (template.start)
+        if (template.start && !template.end)
           template.end = index
       } else if (c == '/' && js[index - 1] == '*') {
         parseBlockerBuffer = null;
@@ -165,12 +154,5 @@ async function parse(file) {
   }
 
   recursiveParse(base);
-  parse("./common.js");
-  // parse(base + "common.js");
-  // parse(base + "post/post-actions.js");
-  // parse(base + "post/post-slider.js");
+  // parse("./common.js");
 })();
-
-// console.log(commonJs);
-
-// console.log(VueTemplateCompiler.compile(template));
