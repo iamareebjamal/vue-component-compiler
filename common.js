@@ -358,3 +358,16 @@ Vue.component("end-of-posts", {
     </div>
   `
 });
+
+new Vue({
+  el: "#app",
+  data: {
+      message: "Hello Vue.js!"
+  },
+  template: /* html */ `
+  <div>
+      <p>{{message}}</p>
+      <haha player="Abba" instrument="Harmonium" />
+  </div>
+  `
+});

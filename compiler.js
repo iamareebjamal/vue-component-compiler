@@ -99,22 +99,28 @@ function findComponentOptions(js, componentStart) {
 }
 
 function findComponents(js) {
-  const componentStarts = [];
-  let searchIndex = -1;
+  const components = [];
 
-  do {
-    searchIndex = js.indexOf("Vue.component", searchIndex + 1);
+  function search(term) {
+    let searchIndex = -1;
 
-    if (searchIndex > -1) {
-      const component = findComponentOptions(js, searchIndex);
-      if (component != null) {
-        componentStarts.push(component);
-        searchIndex = component.start;
+    do {
+      searchIndex = js.indexOf(term, searchIndex + 1);
+
+      if (searchIndex > -1) {
+        const component = findComponentOptions(js, searchIndex);
+        if (component != null) {
+          components.push(component);
+          searchIndex = component.start;
+        }
       }
-    }
-  } while (searchIndex > -1);
+    } while (searchIndex > -1);
+  }
 
-  return componentStarts;
+  search("Vue.component");
+  search("new Vue")
+
+  return components;
 }
 
 function compileTemplate(js, component) {
