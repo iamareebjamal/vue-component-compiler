@@ -1,6 +1,7 @@
 const VueTemplateCompiler = require("./vtc.js");
 const fs = require("fs");
 const path = require("path");
+const process = require('process');
 const promisify = require("util").promisify;
 
 function findTemplateTag(js, index) {
@@ -121,16 +122,18 @@ function compileTemplate(js, component) {
   return VueTemplateCompiler.compile(template);
 }
 
-function compile(js) {
+function compile(js, demo = false) {
   const splitted = [];
   let start = 0;
   const components = findComponents(js);
 
-  console.log("Found " + components.length + " components\n\n");
+  if (demo)
+    console.log("Found " + components.length + " components\n\n");
 
   components.forEach(component => {
     const componentName = js.substring(component.componentStart, component.start);
-    console.log(componentName);
+    if (demo)
+      console.log(componentName);
     if (component.template) {
       splitted.push(js.substring(start, component.template.tagIndex));
       const compiled = compileTemplate(js, component);
@@ -148,16 +151,15 @@ function compile(js) {
   return splitted.join('');
 }
 
-async function parse(file) {
+async function parse(file, demo = false) {
   const js = (await promisify(fs.readFile)(file)).toString();
-  console.log('\n\n\n\n Compiling ' + file + '\n\n')
+  if (demo)
+    console.log('\n\n\n\n Compiling ' + file + '\n\n')
 
-  const compiled = compile(js);
-
-  console.log('\n\n', compiled)
+  return compile(js, demo);
 }
 
-(async () => {
+async function demo() {
   const base =
     "/home/iamareebjamal/git/ng/newsgallery/newsgallery/media/new_layout/js/components/";
 
@@ -166,11 +168,24 @@ async function parse(file) {
     for (const item of dirs) {
       const itemPath = base + item;
       const p = path.parse(itemPath);
-      if (p.ext === ".js") parse(itemPath);
+      if (p.ext === ".js") parse(itemPath, demo = true);
       else recursiveParse(itemPath + "/");
     }
   }
 
   recursiveParse(base);
   // parse("./common.js");
+}
+
+(async () => {
+  const arguments = process.argv;
+  if (arguments.length < 3)
+    await demo()
+  else if (arguments.length < 4)
+    console.log(await parse(arguments[2]))
+  else if (arguments.length < 5) {
+    await promisify(fs.writeFile)(arguments[3], await parse(arguments[2]))
+  } else {
+    console.error('Usage: compiler [infile.js [outfile.js]]')
+  }
 })();
