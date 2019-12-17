@@ -116,27 +116,45 @@ function findComponents(js) {
   return componentStarts;
 }
 
-function compile(js, component) {
+function compileTemplate(js, component) {
   const template = js.substring(component.template.start + 1, component.template.end);
-  console.log(template);
-  const compiled = VueTemplateCompiler.compile(template);
-  console.log(compiled);
+  return VueTemplateCompiler.compile(template);
 }
 
-async function parse(file) {
-  const js = (await promisify(fs.readFile)(file)).toString();
-
+function compile(js) {
+  const splitted = [];
+  let start = 0;
   const components = findComponents(js);
+
+  console.log("Found " + components.length + " components\n\n");
 
   components.forEach(component => {
     const componentName = js.substring(component.componentStart, component.start);
     console.log(componentName);
     if (component.template) {
-      compile(js, component);
-      // console.log(js.substring(component.template.start, component.template.end + 1))
+      splitted.push(js.substring(start, component.template.tagIndex));
+      const compiled = compileTemplate(js, component);
+
+      splitted.push(`render: function(){${compiled.render}}`)
+      if (compiled.staticRenderFns.length)
+        splitted.push(`,\nstaticRenderFns: [${compiled.staticRenderFns.map(fn => `function(){${fn}}`).join()}]`)
+
+      start = component.template.end + 1;
     }
   });
-  console.log("Found " + components.length + " components in " + file);
+
+  splitted.push(js.substring(start, js.length));
+
+  return splitted.join('');
+}
+
+async function parse(file) {
+  const js = (await promisify(fs.readFile)(file)).toString();
+  console.log('\n\n\n\n Compiling ' + file + '\n\n')
+
+  const compiled = compile(js);
+
+  console.log('\n\n', compiled)
 }
 
 (async () => {
