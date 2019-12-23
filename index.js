@@ -143,7 +143,7 @@ function compile(js, demo = false) {
       splitted.push(js.substring(start, component.template.tagIndex));
       const compiled = compileTemplate(js, component);
 
-      splitted.push(`render: function(){${compiled.render}}`)
+      splitted.push('render: ' + transpile(`function r(){${compiled.render}}`))
       if (compiled.staticRenderFns.length)
         splitted.push(`,\nstaticRenderFns: [${compiled.staticRenderFns.map(fn => `function(){${fn}}`).join()}]`)
 
@@ -153,7 +153,7 @@ function compile(js, demo = false) {
 
   splitted.push(js.substring(start, js.length));
 
-  return transpile(splitted.join(''));
+  return splitted.join('');
 }
 
 async function compileFile(file, demo = false) {

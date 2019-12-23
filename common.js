@@ -1,3 +1,5 @@
+'use strict';
+
 Vue.config.ignoredElements = [
   "count",
   "rating",
