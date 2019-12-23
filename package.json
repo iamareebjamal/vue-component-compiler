@@ -1,0 +1,12 @@
+{
+  "name": "vue-component-compiler",
+  "version": "1.0.0",
+  "description": "Compile vue component templates",
+  "main": "index.js",
+  "repository": "https://github.com/iamareebjamal/vue-component-compiler",
+  "author": "Areeb Jamal <jamal.areeb@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "vue-template-compiler": "^2.6.11"
+  }
+}

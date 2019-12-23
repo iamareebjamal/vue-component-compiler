@@ -1,7 +1,5 @@
-const VueTemplateCompiler = require("./vtc.js");
+const VueTemplateCompiler = require("vue-template-compiler");
 const fs = require("fs");
-const path = require("path");
-const process = require('process');
 const promisify = require("util").promisify;
 
 function findTemplateTag(js, index) {
@@ -157,7 +155,7 @@ function compile(js, demo = false) {
   return splitted.join('');
 }
 
-async function parse(file, demo = false) {
+async function compileFile(file, demo = false) {
   const js = (await promisify(fs.readFile)(file)).toString();
   if (demo)
     console.log('\n\n\n\n Compiling ' + file + '\n\n')
@@ -165,33 +163,7 @@ async function parse(file, demo = false) {
   return compile(js, demo);
 }
 
-async function demo() {
-  const base =
-    "/home/iamareebjamal/git/ng/newsgallery/newsgallery/media/new_layout/js/components/";
-
-  async function recursiveParse(base) {
-    const dirs = await promisify(fs.readdir)(base);
-    for (const item of dirs) {
-      const itemPath = base + item;
-      const p = path.parse(itemPath);
-      if (p.ext === ".js") parse(itemPath, demo = true);
-      else recursiveParse(itemPath + "/");
-    }
-  }
-
-  recursiveParse(base);
-  // parse("./common.js");
+module.exports = {
+  compile,
+  compileFile
 }
-
-(async () => {
-  const arguments = process.argv;
-  if (arguments.length < 3)
-    await demo()
-  else if (arguments.length < 4)
-    console.log(await parse(arguments[2]))
-  else if (arguments.length < 5) {
-    await promisify(fs.writeFile)(arguments[3], await parse(arguments[2]))
-  } else {
-    console.error('Usage: compiler [infile.js [outfile.js]]')
-  }
-})();
