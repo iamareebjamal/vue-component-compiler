@@ -1,6 +1,6 @@
 {
   "name": "@iamareebjamal/vue-component-compiler",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Compile vue component templates",
   "main": "index.js",
   "repository": "https://github.com/iamareebjamal/vue-component-compiler",
@@ -9,8 +9,11 @@
   "bin": {
     "vue-component-compiler": "cli.js"
   },
-  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "dependencies": {
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "vue-template-es2015-compiler": "^1.9.1"
   }
 }

@@ -1,6 +1,7 @@
-const VueTemplateCompiler = require("vue-template-compiler");
 const fs = require("fs");
 const promisify = require("util").promisify;
+const VueTemplateCompiler = require("vue-template-compiler");
+const transpile = require('vue-template-es2015-compiler')
 
 function findTemplateTag(js, index) {
   const toMatch = 'template'
@@ -152,7 +153,7 @@ function compile(js, demo = false) {
 
   splitted.push(js.substring(start, js.length));
 
-  return splitted.join('');
+  return transpile(splitted.join(''));
 }
 
 async function compileFile(file, demo = false) {
