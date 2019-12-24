@@ -9,9 +9,6 @@
   "bin": {
     "vue-component-compiler": "cli.js"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "dependencies": {
     "vue-template-compiler": "^2.6.11",
     "vue-template-es2015-compiler": "^1.9.1"
